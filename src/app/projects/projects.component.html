@@ -1,0 +1,27 @@
+<div class="projects__container">
+  <h1>Projects</h1>
+  <div>
+    <div class="projects__button">
+      <button>New project</button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(project of projects(); track project.name) {
+          <tr>
+            <td>
+              {{project.name}} </td>
+            <td>
+            <td>{{project.duration}}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>

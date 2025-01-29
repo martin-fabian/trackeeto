@@ -1,0 +1,41 @@
+.projects {
+  &__container {
+    padding: 1rem;
+    background: #1f0f29;
+  }
+
+  &__button {
+    text-align: right;
+    margin-bottom: 1rem;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+tr {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #30163c;
+}
+
+tbody>tr:hover {
+  background: #2e183c;
+  cursor: pointer;
+}
+
+button {
+  border: none;
+  font-size: 14px;
+  padding: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #d164c5;
+}
+
+button:hover {
+  background: #d172c7;
+}
