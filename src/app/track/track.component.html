@@ -1,8 +1,9 @@
 <div class="track__container">
   <div>
-    <select name="project" id="project">
-      @for(name of projectNames(); track name){
-      <option value={{name}}>{{name}}</option>
+    <select name="project" id="project" (change)="onProjectChange($event)">
+      <option>Select</option>
+      @for(project of projects(); track project.id){
+      <option [value]="project.id">{{project.name}}</option>
       }
     </select>
   </div>

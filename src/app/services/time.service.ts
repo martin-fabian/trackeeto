@@ -1,54 +1,64 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, interval, map, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, map, Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TimeService {
-  private startTime: number | null = null;
-  private timerSubscription: Subscription | null = null;
+  private startTimes = new Map<number, number>();
+  private timerSubscriptions = new Map<number, Subscription>();
+  private elapsedTimeSubjects = new Map<number, BehaviorSubject<number>>();
 
-  private elapsedTimeSubject = new BehaviorSubject<number>(0);
-  elapsedTime$ = this.elapsedTimeSubject.asObservable();
-
-  constructor() {
-    this.restoreTimer();
+  public getElapsedTime$(id: number): Observable<number> {
+    if (!this.elapsedTimeSubjects.has(id)) {
+      this.elapsedTimeSubjects.set(id, new BehaviorSubject<number>(0));
+    }
+    return this.elapsedTimeSubjects.get(id)!.asObservable();
   }
 
-  startTimer() {
-    if (!this.startTime) {
-      this.startTime = Date.now();
-      localStorage.setItem('startTime', this.startTime.toString());
+  startTimer(id: number) {
+    if (!this.startTimes.has(id)) {
+      this.startTimes.set(id, Date.now());
+      localStorage.setItem(`startTime-${id}`, this.startTimes.get(id)!.toString());
     }
 
-    this.timerSubscription = interval(1000)
-      .pipe(map(() => Date.now() - (this.startTime as number)))
+    if (this.timerSubscriptions.has(id)) {
+      return
+    }
+
+    const elapsedTimeSubject = this.getElapsedTimeSubject(id);
+
+    const subscription = interval(1000)
+      .pipe(map(() => Date.now() - (this.startTimes.get(id) as number)))
       .subscribe(timeElapsed => {
-        console.log(timeElapsed)
-        this.elapsedTimeSubject.next(timeElapsed);
+        console.log(`Projekt ${id}: ${timeElapsed} ms`);
+        elapsedTimeSubject.next(timeElapsed);
       });
+
+    this.timerSubscriptions.set(id, subscription);
   }
 
-  stopTimer() {
-    if (this.startTime) {
-      const totalTime = Date.now() - this.startTime;
-      console.log(`Celkový čas: ${totalTime} ms`);
-      this.resetTimer();
+  stopTimer(id: number) {
+    if (this.startTimes.has(id)) {
+      const totalTime = Date.now() - (this.startTimes.get(id) as number);
+      console.log(`Projekt ${id} dokončen: ${totalTime} ms`);
+      this.resetTimer(id);
     }
   }
 
-  private resetTimer() {
-    this.startTime = null;
-    localStorage.removeItem('startTime');
-    this.elapsedTimeSubject.next(0);
-    this.timerSubscription?.unsubscribe();
+  private resetTimer(id: number) {
+    this.startTimes.delete(id);
+    localStorage.removeItem(`startTime-${id}`);
+    this.timerSubscriptions.get(id)?.unsubscribe();
+    this.timerSubscriptions.delete(id);
+    this.getElapsedTimeSubject(id).next(0);
   }
 
-  private restoreTimer() {
-    const savedStartTime = localStorage.getItem('startTime');
-    if (savedStartTime) {
-      this.startTime = parseInt(savedStartTime, 10);
-      this.startTimer();
+  private getElapsedTimeSubject(id: number): BehaviorSubject<number> {
+    if (!this.elapsedTimeSubjects.has(id)) {
+      this.elapsedTimeSubjects.set(id, new BehaviorSubject<number>(0));
     }
+    return this.elapsedTimeSubjects.get(id)!;
   }
+
 }

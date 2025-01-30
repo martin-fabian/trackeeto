@@ -12,5 +12,5 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 })
 export class MainMenuComponent {
   private readonly timeService = inject(TimeService);
-  public readonly time$ = this.timeService.elapsedTime$;
+  public readonly time$ = this.timeService.getElapsedTime$(1);
 }

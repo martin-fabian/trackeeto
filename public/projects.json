@@ -1,6 +1,4 @@
 [
-{"name": "Project 1", "duration" : "15.45"},
-{"name" :"Project 2", "duration" : "01:22"},
-{"name" :"Project 3", "duration" : "03:22"},
-{"name" :"Project 4", "duration" : "11:22"}
+  { "id": 1,"name": "Project 1", "startDateTime": "12.10.2024 15:45", "endDateTime": "12.10.2024 16:45", "duration": 3600 },
+  {"id": 2, "name": "Project 2", "startDateTime": "12.10.2024 15:35", "endDateTime": "12.10.2024 16:15", "duration": 2400 }
 ]

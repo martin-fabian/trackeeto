@@ -19,6 +19,11 @@ tr {
   gap: 1rem;
   padding: 1rem;
   border: 1px solid #30163c;
+  align-items: center;
+}
+
+td {
+  min-width: 70px;
 }
 
 tbody>tr:hover {
@@ -37,5 +42,26 @@ button {
 }
 
 button:hover {
+  background: #d172c7;
+}
+
+button.timer {
+  background-color: transparent;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  position: relative;
+  z-index: 0;
+  transition: background-color 0.2s;
+}
+
+button.timer:hover {
   background: #d172c7;
 }
