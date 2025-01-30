@@ -17,12 +17,11 @@ export class TrackComponent implements OnInit {
   private readonly projectService = inject(ProjectService);
   private readonly destroyRef = inject(DestroyRef);
   public readonly isTimerRunning = signal(false);
-  public readonly time$ = this.timeService.getElapsedTime$(1);
   public readonly projects = signal<ProjectResponse[]>([]);
-  public readonly selectedProjectId = signal<number | null>(null);
+  private readonly selectedProjectId = signal<number | null>(null);
+  public readonly time = signal<number | undefined>(undefined);
 
   public ngOnInit(): void {
-    this.time$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(time => this.isTimerRunning.set(time > 0))
     this.projectService.getData().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(projects => {
       this.projects.set(projects);
     })
@@ -33,6 +32,10 @@ export class TrackComponent implements OnInit {
     if (selectElement.value.toString() !== "Select") {
       this.selectedProjectId.set(Number(selectElement.value));
     }
+
+    this.timeService.getElapsedTime$(this.selectedProjectId()!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(time => {
+      return this.time.set(time)
+    })
   }
 
   public startTimer(): void {

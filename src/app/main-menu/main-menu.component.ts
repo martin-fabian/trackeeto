@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TimeService } from '../services/time.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
+import { BehaviorSubject, of, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-main-menu',
@@ -10,7 +12,15 @@ import { AsyncPipe, DatePipe } from '@angular/common';
   styleUrl: './main-menu.component.scss',
   standalone: true
 })
-export class MainMenuComponent {
+export class MainMenuComponent implements OnInit {
   private readonly timeService = inject(TimeService);
-  public readonly time$ = this.timeService.getElapsedTime$(1);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly selectedProjectId$ = this.timeService.selectedProjectId.asObservable();
+  public readonly time = signal<number | undefined>(undefined);
+
+  public ngOnInit(): void {
+    this.selectedProjectId$.pipe(takeUntilDestroyed(this.destroyRef), switchMap(id => id !== undefined ?
+      this.timeService.getElapsedTime$(id) : of(0)
+    )).subscribe((time) => this.time.set(time))
+  }
 }

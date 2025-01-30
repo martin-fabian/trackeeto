@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, interval, map, Observable, Subscription } from 'rxjs';
 
 @Injectable({
@@ -8,6 +8,7 @@ export class TimeService {
   private startTimes = new Map<number, number>();
   private timerSubscriptions = new Map<number, Subscription>();
   private elapsedTimeSubjects = new Map<number, BehaviorSubject<number>>();
+  public selectedProjectId = new BehaviorSubject<number | undefined>(undefined);
 
   public getElapsedTime$(id: number): Observable<number> {
     if (!this.elapsedTimeSubjects.has(id)) {
@@ -17,6 +18,7 @@ export class TimeService {
   }
 
   startTimer(id: number) {
+    this.selectedProjectId.next(id);
     if (!this.startTimes.has(id)) {
       this.startTimes.set(id, Date.now());
       localStorage.setItem(`startTime-${id}`, this.startTimes.get(id)!.toString());
@@ -47,6 +49,7 @@ export class TimeService {
   }
 
   private resetTimer(id: number) {
+    this.selectedProjectId.next(undefined);
     this.startTimes.delete(id);
     localStorage.removeItem(`startTime-${id}`);
     this.timerSubscriptions.get(id)?.unsubscribe();

@@ -9,7 +9,7 @@
             <path
               d="M8.001 8.948L8 9c0 .556.448 1 1 1h3c.556 0 1-.448 1-1 0-.556-.448-1-1-1h-2V4.003a1 1 0 10-2 0v4.894l.001.051zM9 18A9 9 0 109 0a9 9 0 000 18z"
               fill-rule="evenodd"></path>
-          </svg><span>{{time$ | async | date: 'HH:mm:ss': 'UTC'}}</span>
+          </svg><span>{{time() | date: 'HH:mm:ss': 'UTC'}}</span>
         </li>
       </a>
     </ul>
