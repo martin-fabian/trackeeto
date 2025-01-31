@@ -19,6 +19,10 @@ button:hover {
   background: #d172c7;
 }
 
+select:disabled {
+  cursor: not-allowed;
+}
+
 .track {
   &__container {
     display: flex;

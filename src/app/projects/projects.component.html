@@ -15,42 +15,66 @@
           </tr>
         </thead>
         <tbody>
-          @for(project of projects(); track project.name) {
-          <tr>
-            <td>
-              {{project.name}} </td>
-            <td>
-              {{project.startDateTime}}
-            </td>
-            <td>
-              {{project.endDateTime}}
-            </td>
-            <td>{{project.duration}}
-            </td>
-            <td>
-              <div>@if(!isTimerRunningMap().get(project.id)) {
-                <button class="timer" (click)="startTimer(project.id)" aria-label="Start/Stop time entry"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-                    <g fill="none" fill-rule="evenodd">
-                      <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
-                      <path fill="#1F0F29"
-                        d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z">
-                      </path>
-                    </g>
-                  </svg></button>
-                } @else {
-                <button class="timer" (click)="stopTimer(project.id)" aria-label="Start/Stop time entry">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-                    <g fill="none" fill-rule="evenodd">
-                      <rect width="36" height="36" fill="rgb(230, 125, 111)" rx="18"></rect>
-                      <rect width="14" height="14" x="11" y="11" fill="#1F0F29" rx="1.5"></rect>
-                    </g>
-                  </svg></button>
-                }
-              </div>
-            </td>
-          </tr>
+          @for (project of projects(); track project.name) {
+            <tr>
+              <td>
+                {{ project.name }}
+              </td>
+              <td>
+                {{ project.startDateTime }}
+              </td>
+              <td>
+                {{ project.endDateTime }}
+              </td>
+              <td>{{ project.duration }}</td>
+              <td>
+                <div>
+                  @if (!isTimerRunningMap().get(project.id)) {
+                    <button
+                      class="timer"
+                      (click)="startTimer(project.id)"
+                      aria-label="Start/Stop time entry"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                      >
+                        <g fill="none" fill-rule="evenodd">
+                          <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
+                          <path
+                            fill="#1F0F29"
+                            d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"
+                          ></path>
+                        </g>
+                      </svg>
+                    </button>
+                  } @else {
+                    <button
+                      class="timer"
+                      (click)="stopTimer(project.id)"
+                      aria-label="Start/Stop time entry"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="36"
+                        height="36"
+                        viewBox="0 0 36 36"
+                      >
+                        <g fill="none" fill-rule="evenodd">
+                          <rect width="36" height="36" fill="rgb(230, 125, 111)" rx="18"></rect>
+                          <rect width="14" height="14" x="11" y="11" fill="#1F0F29" rx="1.5"></rect>
+                        </g>
+                      </svg>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
+</div>
