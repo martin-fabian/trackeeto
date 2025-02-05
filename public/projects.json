@@ -2,15 +2,16 @@
   {
     "id": 1,
     "name": "Project 1",
-    "startDateTime": "12.10.2024 15:45",
-    "endDateTime": "12.10.2024 16:45",
+    "startDateTime": "2025-02-04T08:20:00.000Z",
+    "endDateTime": "2025-02-04T09:20:20.000Z",
     "duration": 3600
   },
   {
     "id": 2,
     "name": "Project 2",
-    "startDateTime": "12.10.2024 15:35",
-    "endDateTime": "12.10.2024 16:15",
-    "duration": 2400
+    "startDateTime": "2025-02-04T09:20:00.000Z",
+    "endDateTime": "2025-02-04T09:20:20.000Z",
+    "duration": 3600
   }
 ]
+

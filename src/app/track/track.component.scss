@@ -15,6 +15,10 @@ button {
   transition: background-color 0.2s;
 }
 
+input:disabled {
+  cursor: not-allowed;
+}
+
 button:hover {
   background: #d172c7;
 }
@@ -36,6 +40,8 @@ select:disabled {
       font-size: 18px;
       font-weight: 600;
       color: rgb(142, 111, 155);
+      background: #1f0f29;
+      border: none;
     }
   }
 }

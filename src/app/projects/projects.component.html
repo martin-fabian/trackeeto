@@ -2,7 +2,7 @@
   <h1>Projects</h1>
   <div>
     <div class="projects__button">
-      <button>New project</button>
+      <button routerLink="/new-project" routerLinkActive="active">New project</button>
     </div>
     <div>
       <table>
@@ -11,7 +11,7 @@
             <th>Project</th>
             <th>Start date & time</th>
             <th>End date & time</th>
-            <th>Duration</th>
+            <th>Total duration</th>
           </tr>
         </thead>
         <tbody>
@@ -21,47 +21,35 @@
                 {{ project.name }}
               </td>
               <td>
-                {{ project.startDateTime }}
+                {{ project.startDateTime | date: 'dd.MM.yyyy HH:mm' }}
               </td>
               <td>
-                {{ project.endDateTime }}
+                {{ project.endDateTime | date: 'dd.MM.yyyy HH:mm' }}
               </td>
-              <td>{{ project.duration }}</td>
+              <td>
+                <input
+                  [disabled]="isAnyProjectRunning()"
+                  class="projects__container-input"
+                  (keypress)="onKeyPress($event)"
+                  (blur)="onBlur($event, project.id)"
+                  [value]="project.duration | date: 'HH:mm:ss' : 'UTC'" />
+              </td>
               <td>
                 <div>
                   @if (!isTimerRunningMap().get(project.id)) {
-                    <button
-                      class="timer"
-                      (click)="startTimer(project.id)"
-                      aria-label="Start/Stop time entry"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="36"
-                        height="36"
-                        viewBox="0 0 36 36"
-                      >
+                    <button class="timer" (click)="startTimer(project.id)" aria-label="Start/Stop time entry">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
                         <g fill="none" fill-rule="evenodd">
                           <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
                           <path
                             fill="#1F0F29"
-                            d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"
-                          ></path>
+                            d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"></path>
                         </g>
                       </svg>
                     </button>
                   } @else {
-                    <button
-                      class="timer"
-                      (click)="stopTimer(project.id)"
-                      aria-label="Start/Stop time entry"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="36"
-                        height="36"
-                        viewBox="0 0 36 36"
-                      >
+                    <button class="timer" (click)="stopTimer(project.id)" aria-label="Start/Stop time entry">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
                         <g fill="none" fill-rule="evenodd">
                           <rect width="36" height="36" fill="rgb(230, 125, 111)" rx="18"></rect>
                           <rect width="14" height="14" x="11" y="11" fill="#1F0F29" rx="1.5"></rect>

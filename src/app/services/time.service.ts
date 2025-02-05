@@ -1,66 +1,53 @@
-import { Injectable } from '@angular/core'
-import { BehaviorSubject, interval, map, Observable, Subscription } from 'rxjs'
+import { Injectable, signal } from '@angular/core';
+import { BehaviorSubject, interval, map, Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TimeService {
-  private startTimes = new Map<number, number>()
-  private timerSubscriptions = new Map<number, Subscription>()
-  private elapsedTimeSubjects = new Map<number, BehaviorSubject<number>>()
-  public selectedProjectId = new BehaviorSubject<number | undefined>(undefined)
+  private startTime = signal(0);
+  private timerSubscription = new Subscription();
+  private elapsedTimeSubject = new BehaviorSubject<number>(0);
+  public selectedProjectId = new BehaviorSubject<number | undefined>(undefined);
 
-  public getElapsedTime$(id: number): Observable<number> {
-    if (!this.elapsedTimeSubjects.has(id)) {
-      this.elapsedTimeSubjects.set(id, new BehaviorSubject<number>(0))
-    }
-    return this.elapsedTimeSubjects.get(id)!.asObservable()
+  public getElapsedTime$(): Observable<number> {
+    return this.elapsedTimeSubject.asObservable();
   }
 
   startTimer(id: number) {
-    this.selectedProjectId.next(id)
-    if (!this.startTimes.has(id)) {
-      this.startTimes.set(id, Date.now())
-      localStorage.setItem(`startTime-${id}`, this.startTimes.get(id)!.toString())
+    if (this.selectedProjectId.getValue()) {
+      return;
     }
 
-    if (this.timerSubscriptions.has(id)) {
-      return
+    this.selectedProjectId.next(id);
+    if (!this.startTime()) {
+      this.startTime.set(Date.now());
+      localStorage.setItem(`startTime-${id}`, this.startTime()!.toString());
     }
-
-    const elapsedTimeSubject = this.getElapsedTimeSubject(id)
 
     const subscription = interval(1000)
-      .pipe(map(() => Date.now() - (this.startTimes.get(id) as number)))
-      .subscribe((timeElapsed) => {
-        console.log(`Projekt ${id}: ${timeElapsed} ms`)
-        elapsedTimeSubject.next(timeElapsed)
-      })
+      .pipe(map(() => Date.now() - this.startTime()))
+      .subscribe(timeElapsed => {
+        console.log(`Projekt ${id}: ${timeElapsed} ms`);
+        this.elapsedTimeSubject.next(timeElapsed);
+      });
 
-    this.timerSubscriptions.set(id, subscription)
+    this.timerSubscription = subscription;
   }
 
   stopTimer(id: number) {
-    if (this.startTimes.has(id)) {
-      const totalTime = Date.now() - (this.startTimes.get(id) as number)
-      console.log(`Projekt ${id} dokončen: ${totalTime} ms`)
-      this.resetTimer(id)
+    if (this.startTime()) {
+      const totalTime = Date.now() - this.startTime();
+      console.log(`Projekt ${id} dokončen: ${totalTime} ms`);
+      this.resetTimer(id);
     }
   }
 
   private resetTimer(id: number) {
-    this.selectedProjectId.next(undefined)
-    this.startTimes.delete(id)
-    localStorage.removeItem(`startTime-${id}`)
-    this.timerSubscriptions.get(id)?.unsubscribe()
-    this.timerSubscriptions.delete(id)
-    this.getElapsedTimeSubject(id).next(0)
-  }
-
-  private getElapsedTimeSubject(id: number): BehaviorSubject<number> {
-    if (!this.elapsedTimeSubjects.has(id)) {
-      this.elapsedTimeSubjects.set(id, new BehaviorSubject<number>(0))
-    }
-    return this.elapsedTimeSubjects.get(id)!
+    this.selectedProjectId.next(undefined);
+    this.startTime.set(0);
+    localStorage.removeItem(`startTime-${id}`);
+    this.timerSubscription.unsubscribe();
+    this.elapsedTimeSubject.next(0);
   }
 }

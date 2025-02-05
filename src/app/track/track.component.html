@@ -5,36 +5,26 @@
       [disabled]="isTimerRunning()"
       [(ngModel)]="projectId"
       id="project"
-      (change)="onProjectChange($event)"
-    >
+      (change)="onProjectChange($event)">
       @for (project of projects(); track project.id) {
         <option [value]="project.id">{{ project.name }}</option>
       }
     </select>
   </div>
-  <div
-    aria-label="Time entry duration"
-    aria-role="textbox"
-    tabindex="0"
+  <input
     class="track__container-time"
-    contenteditable="true"
-  >
-    <span>{{ time() ? (time() | date: 'HH:mm:ss' : 'UTC') : '00:00:00' }}</span>
-  </div>
+    type="text"
+    [disabled]="true"
+    [value]="time() ? (time() | date: 'HH:mm:ss' : 'UTC') : '00:00:00'" />
   <div>
     @if (!isTimerRunning()) {
-      <button
-        (click)="startTimer()"
-        [disabled]="selectedProjectId() === null"
-        aria-label="Start/Stop time entry"
-      >
+      <button (click)="startTimer()" [disabled]="selectedProjectId() === null" aria-label="Start/Stop time entry">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
           <g fill="none" fill-rule="evenodd">
             <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
             <path
               fill="#1F0F29"
-              d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"
-            ></path>
+              d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"></path>
           </g>
         </svg>
       </button>

@@ -1,11 +1,10 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { TimeService } from '../services/time.service';
 import { DatePipe } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProjectService } from '../services/project.service';
 import { ProjectResponse } from '../interfaces/project-response.interface';
-import { filter } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-track',
@@ -17,7 +16,6 @@ import { FormsModule } from '@angular/forms';
 export class TrackComponent implements OnInit {
   private readonly timeService = inject(TimeService);
   private readonly projectService = inject(ProjectService);
-  private readonly destroyRef = inject(DestroyRef);
   public readonly isTimerRunning = signal(false);
   public readonly projects = signal<ProjectResponse[]>([]);
   protected readonly selectedProjectId = signal<number | null>(null);
@@ -33,31 +31,23 @@ export class TrackComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.projectService
-      .getData()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(projects => {
-        this.projects.set(projects);
-        if (!this.projectId) {
-          this.projectId = this.projects()[0].id;
-        }
-      });
+    this.projectService.projects$.subscribe(projects => {
+      this.projects.set(projects);
+      if (!this.projectId && this.projects().length > 0) {
+        this.projectId = this.projects()[0]!.id;
+      }
+    });
+    this.listenOnTimeChange();
     this.savedProjectId$.pipe(filter(id => !!id)).subscribe(id => {
-      this.listenOnTimeChange(id!);
       this.projectId = id!;
       this.isTimerRunning.set(true);
-      console.log('selected project id ', this.selectedProjectId());
     });
   }
 
-  private listenOnTimeChange(id: number): void {
-    this.timeService
-      .getElapsedTime$(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(time => {
-        console.log('time ', time);
-        return this.time.set(time);
-      });
+  private listenOnTimeChange(): void {
+    this.timeService.getElapsedTime$().subscribe(time => {
+      this.time.set(time);
+    });
   }
 
   public onProjectChange(event: Event): void {
@@ -73,14 +63,28 @@ export class TrackComponent implements OnInit {
     if (this.projectId) {
       this.isTimerRunning.set(true);
       this.timeService.startTimer(this.selectedProjectId()!);
-      this.listenOnTimeChange(this.selectedProjectId()!);
+      this.listenOnTimeChange();
     }
   }
 
   public stopTimer(): void {
-    if (this.projectId) {
-      this.isTimerRunning.set(false);
-      this.timeService.stopTimer(this.selectedProjectId()!);
+    if (!this.projectId) {
+      return;
     }
+    this.isTimerRunning.set(false);
+    const elapsedTime = this.time();
+    const project = this.projects().find(p => p.id === this.projectId);
+
+    if (project && elapsedTime) {
+      const updatedProject: ProjectResponse = {
+        ...project,
+        endDateTime: new Date(),
+        duration: Math.round(project.duration + elapsedTime),
+      };
+
+      this.timeService.stopTimer(this.selectedProjectId()!);
+      this.projectService.updateProject(updatedProject);
+    }
+    this.time.set(0);
   }
 }

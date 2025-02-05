@@ -2,6 +2,25 @@
   &__container {
     padding: 1rem;
     background: #1f0f29;
+
+    &-input {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 1rem;
+      background: #1f0f29;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgb(142, 111, 155);
+      background: #1f0f29;
+      border: none;
+    }
+
+    &-input:disabled {
+      cursor: not-allowed;
+    }
+
   }
 
   &__button {
@@ -26,7 +45,7 @@ td {
   min-width: 70px;
 }
 
-tbody > tr:hover {
+tbody>tr:hover {
   background: #2e183c;
   cursor: pointer;
 }
