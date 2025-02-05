@@ -2,7 +2,7 @@
   <h1>Projects</h1>
   <div>
     <div class="projects__button">
-      <button routerLink="/new-project" routerLinkActive="active">New project</button>
+      <button (click)="openModal()">New project</button>
     </div>
     <div>
       <table>
@@ -66,3 +66,7 @@
     </div>
   </div>
 </div>
+
+@if (showModal()) {
+  <app-project-form (hideModalChange)="hideModal()"></app-project-form>
+}

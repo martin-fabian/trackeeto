@@ -76,8 +76,10 @@ export class TrackComponent implements OnInit {
     const project = this.projects().find(p => p.id === this.projectId);
 
     if (project && elapsedTime) {
+      console.log(project);
       const updatedProject: ProjectResponse = {
         ...project,
+        startDateTime: project.startDateTime !== undefined ? project.startDateTime : new Date(),
         endDateTime: new Date(),
         duration: Math.round(project.duration + elapsedTime),
       };

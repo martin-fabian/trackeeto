@@ -22,13 +22,11 @@ export class TimeService {
     this.selectedProjectId.next(id);
     if (!this.startTime()) {
       this.startTime.set(Date.now());
-      localStorage.setItem(`startTime-${id}`, this.startTime()!.toString());
     }
 
     const subscription = interval(1000)
       .pipe(map(() => Date.now() - this.startTime()))
       .subscribe(timeElapsed => {
-        console.log(`Projekt ${id}: ${timeElapsed} ms`);
         this.elapsedTimeSubject.next(timeElapsed);
       });
 
@@ -37,8 +35,6 @@ export class TimeService {
 
   stopTimer(id: number) {
     if (this.startTime()) {
-      const totalTime = Date.now() - this.startTime();
-      console.log(`Projekt ${id} dokončen: ${totalTime} ms`);
       this.resetTimer(id);
     }
   }
@@ -46,7 +42,6 @@ export class TimeService {
   private resetTimer(id: number) {
     this.selectedProjectId.next(undefined);
     this.startTime.set(0);
-    localStorage.removeItem(`startTime-${id}`);
     this.timerSubscription.unsubscribe();
     this.elapsedTimeSubject.next(0);
   }

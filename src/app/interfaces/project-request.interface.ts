@@ -1,5 +1,5 @@
-export interface ProjectResponse {
-  id: number;
+export interface ProjectRequest {
+  id?: number;
   name: string;
   duration: number;
   startDateTime?: Date;

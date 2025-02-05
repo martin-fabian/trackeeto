@@ -4,13 +4,13 @@ import { ProjectService } from '../services/project.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TimeService } from '../services/time.service';
 import { filter } from 'rxjs';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { TimeFormatPipe } from '../pipes/time-format.pipe';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ProjectFormComponent } from '../project-form/project-form.component';
 
 @Component({
   selector: 'app-projects',
-  imports: [DatePipe, DecimalPipe, TimeFormatPipe, RouterLink],
+  imports: [DatePipe, RouterLink, ProjectFormComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   standalone: true,
@@ -25,6 +25,7 @@ export class ProjectsComponent implements OnInit {
   private readonly savedProjectId$ = this.timeService.selectedProjectId.asObservable();
   protected readonly selectedProjectId = signal<number | null>(null);
   public readonly isAnyProjectRunning = signal(false);
+  public readonly showModal = signal(false);
 
   get projectId(): number | null {
     return this.selectedProjectId();
@@ -50,7 +51,14 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  public createNewProject(): void {}
+  public hideModal(): void {
+    console.log('hide');
+    this.showModal.set(false);
+  }
+
+  public openModal(): void {
+    this.showModal.set(true);
+  }
 
   private listenOnTimeChange(): void {
     this.timeService.getElapsedTime$().subscribe(time => {
@@ -88,6 +96,7 @@ export class ProjectsComponent implements OnInit {
     }
     const updatedProject: ProjectResponse = {
       ...project,
+      startDateTime: project.startDateTime !== undefined ? project.startDateTime : new Date(),
       endDateTime: new Date(),
       duration: Math.round(project.duration + this.time()!),
     };
@@ -99,7 +108,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   public onKeyPress(event: KeyboardEvent): void {
-    console.log('keypress ', event.key);
     const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'];
     const regex = /^[0-9]+$/;
 
