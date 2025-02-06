@@ -25,14 +25,12 @@
       display: flex;
       gap: 1rem;
     }
-
   }
 
   &__button {
     text-align: right;
     margin-bottom: 1rem;
   }
-
 }
 
 table {
@@ -51,7 +49,7 @@ td {
   min-width: 70px;
 }
 
-tbody>tr:hover {
+tbody > tr:hover {
   background: #2e183c;
   cursor: pointer;
 }
@@ -97,4 +95,10 @@ button.timer:disabled {
 
 button.timer:disabled:hover {
   background: none;
+}
+
+@media (max-width: 600px) {
+  .projects__table {
+    overflow: scroll;
+  }
 }

@@ -8,15 +8,15 @@
     background: #2c1338;
     z-index: 9;
 
+    &-user {
+      position: absolute;
+      bottom: 0;
+    }
+
     &-icon {
       position: absolute;
       top: 50%;
-      left: -200px;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      color: white;
-      cursor: pointer;
-      z-index: 1;
+      left: -170px;
     }
   }
 }
@@ -42,23 +42,28 @@ a {
 
 @media (max-width: 600px) {
   .main-menu__container {
-    left: -190px
-  }
-
-  .main-menu__container-icon {
     position: absolute;
-    top: 50%;
-    left: 20px;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-    z-index: 1;
+    top: 0;
+    left: -190px;
+    width: 200px;
+    height: 100%;
+    background: #2c1338;
+    z-index: 9;
 
-  }
+    &-icon {
+      position: absolute;
+      left: 170px;
+      top: 45%;
+    }
 
-  .main-menu__container:hover {
-    left: 0;
-
+    &-full-menu {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100%;
+      background: #2c1338;
+      z-index: 9;
+    }
   }
 }

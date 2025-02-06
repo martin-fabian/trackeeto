@@ -14,8 +14,8 @@
   text-align: center;
 
   &__email {
+    margin-top: 0.3rem;
     color: red;
-    font-weight: bold;
   }
 }
 
@@ -31,7 +31,6 @@ h2 {
 
 label {
   display: block;
-  font-weight: bold;
   margin-bottom: 5px;
   color: #555;
 }

@@ -51,7 +51,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   public hideModal(): void {
-    console.log('hide');
     this.showModal.set(false);
   }
 

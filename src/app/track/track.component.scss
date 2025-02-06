@@ -43,8 +43,10 @@ select:disabled {
     justify-content: center;
     padding: 1rem;
     background: #1f0f29;
-    width: 70vw;
-    height: 70vw;
+    width: 50vw;
+    min-width: 300px;
+    min-height: 300px;
+    height: 50vw;
     border-radius: 50%;
     text-align: center;
     flex-direction: column;
