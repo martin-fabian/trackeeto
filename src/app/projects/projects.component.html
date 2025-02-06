@@ -35,10 +35,10 @@
                   [value]="project.duration | date: 'HH:mm:ss' : 'UTC'" />
               </td>
               <td>
-                <div>
+                <div class="projects__container-buttons">
                   @if (!isTimerRunningMap().get(project.id)) {
                     <button class="timer" (click)="startTimer(project.id)" aria-label="Start/Stop time entry">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
                         <g fill="none" fill-rule="evenodd">
                           <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
                           <path
@@ -49,7 +49,7 @@
                     </button>
                   } @else {
                     <button class="timer" (click)="stopTimer(project.id)" aria-label="Start/Stop time entry">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
                         <g fill="none" fill-rule="evenodd">
                           <rect width="36" height="36" fill="rgb(230, 125, 111)" rx="18"></rect>
                           <rect width="14" height="14" x="11" y="11" fill="#1F0F29" rx="1.5"></rect>
@@ -57,6 +57,21 @@
                       </svg>
                     </button>
                   }
+                  <button
+                    class="timer"
+                    (click)="removeProject(project.id)"
+                    [disabled]="isTimerRunningMap().get(project.id)"
+                    aria-label="Start/Stop time entry">
+                    <svg viewBox="0 0 1024.00 1024.00" xmlns="http://www.w3.org/2000/svg">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          fill="#e43e07"
+                          d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zM288 512a38.4 38.4 0 0 0 38.4 38.4h371.2a38.4 38.4 0 0 0 0-76.8H326.4A38.4 38.4 0 0 0 288 512z"></path>
+                      </g>
+                    </svg>
+                  </button>
                 </div>
               </td>
             </tr>

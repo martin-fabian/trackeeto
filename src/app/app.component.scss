@@ -1,3 +1,9 @@
 .container {
   margin-left: 200px;
 }
+
+@media (max-width: "600px") {
+  .container {
+    margin-left: unset;
+  }
+}

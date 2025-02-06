@@ -1,11 +1,23 @@
 .main-menu {
   &__container {
-    position: fixed;
-    top: 0px;
-    left: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 200px;
     height: 100%;
     background: #2c1338;
+    z-index: 9;
+
+    &-icon {
+      position: absolute;
+      top: 50%;
+      left: -200px;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      z-index: 1;
+    }
   }
 }
 
@@ -22,4 +34,31 @@ li {
 
 section {
   padding: 1rem;
+}
+
+a {
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .main-menu__container {
+    left: -190px
+  }
+
+  .main-menu__container-icon {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index: 1;
+
+  }
+
+  .main-menu__container:hover {
+    left: 0;
+
+  }
 }

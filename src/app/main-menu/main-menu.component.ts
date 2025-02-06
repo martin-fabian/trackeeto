@@ -4,6 +4,7 @@ import { TimeService } from '../services/time.service';
 import { DatePipe } from '@angular/common';
 import { of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-main-menu',
@@ -17,6 +18,7 @@ export class MainMenuComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly selectedProjectId$ = this.timeService.selectedProjectId.asObservable();
   public readonly time = signal<number | undefined>(undefined);
+  private readonly authService = inject(AuthService);
 
   public ngOnInit(): void {
     this.selectedProjectId$
@@ -25,5 +27,9 @@ export class MainMenuComponent implements OnInit {
         switchMap(id => (id !== undefined ? this.timeService.getElapsedTime$() : of(0))),
       )
       .subscribe(time => this.time.set(time));
+  }
+
+  public logout(): void {
+    this.authService.logout();
   }
 }

@@ -21,12 +21,18 @@
       cursor: not-allowed;
     }
 
+    &-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
   }
 
   &__button {
     text-align: right;
     margin-bottom: 1rem;
   }
+
 }
 
 table {
@@ -83,4 +89,12 @@ button.timer {
 
 button.timer:hover {
   background: #d172c7;
+}
+
+button.timer:disabled {
+  cursor: not-allowed;
+}
+
+button.timer:disabled:hover {
+  background: none;
 }

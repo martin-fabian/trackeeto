@@ -47,6 +47,13 @@ export class ProjectService {
     return [...mergedProjects, ...newProjects];
   }
 
+  public removeProject(id: number): void {
+    const updatedProjects = this.allProjects().filter(project => project.id !== id);
+    this.allProjects.set(updatedProjects);
+    this.saveToLocalStorage(updatedProjects);
+    this.projectsSubject.next(updatedProjects);
+  }
+
   public updateProject(updatedProject: ProjectResponse): void {
     const storedProjects = localStorage.getItem('projects');
     const projects: ProjectResponse[] = storedProjects ? JSON.parse(storedProjects) : [];

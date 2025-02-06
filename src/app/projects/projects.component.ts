@@ -5,12 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TimeService } from '../services/time.service';
 import { filter } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 
 @Component({
   selector: 'app-projects',
-  imports: [DatePipe, RouterLink, ProjectFormComponent],
+  imports: [DatePipe, ProjectFormComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   standalone: true,
@@ -64,6 +63,10 @@ export class ProjectsComponent implements OnInit {
     this.timeService.getElapsedTime$().subscribe(time => {
       this.time.set(time);
     });
+  }
+
+  public removeProject(id: number): void {
+    this.projectService.removeProject(id);
   }
 
   public startTimer(id: number): void {
@@ -134,6 +137,24 @@ export class ProjectsComponent implements OnInit {
       const newDuration = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
       const project = this.projects().find(p => p.id === projectId);
+
+      if (project && project.endDateTime) {
+        const oldDuration = project.duration;
+        const diff = newDuration - oldDuration;
+
+        project.endDateTime = new Date(project.endDateTime.getTime() + diff);
+        project.startDateTime = new Date(project.endDateTime.getTime() - newDuration);
+
+        const now = new Date();
+        if (project.endDateTime > now) {
+          project.endDateTime = now;
+          project.startDateTime = new Date(now.getTime() - newDuration);
+        }
+      } else {
+        const now = new Date();
+        project!.endDateTime = now;
+        project!.startDateTime = new Date(now.getTime() - newDuration);
+      }
 
       const updatedProject: ProjectResponse = {
         ...project!,
