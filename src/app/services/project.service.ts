@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, tap } from 'rxjs';
 import { ProjectResponse } from '../interfaces/project-response.interface';
 import { ProjectRequest } from '../interfaces/project-request.interface';
 
@@ -30,8 +30,8 @@ export class ProjectService {
   }
 
   private mergeWithLocalStorage(projects: ProjectResponse[]): ProjectResponse[] {
-    const storedProjects = localStorage.getItem('projects');
-    if (!storedProjects) {
+    const storedProjects: string | null = localStorage.getItem('projects');
+    if (storedProjects === null) {
       return projects;
     }
 
@@ -55,8 +55,8 @@ export class ProjectService {
   }
 
   public updateProject(updatedProject: ProjectResponse): void {
-    const storedProjects = localStorage.getItem('projects');
-    const projects: ProjectResponse[] = storedProjects ? JSON.parse(storedProjects) : [];
+    const storedProjects: string | null = localStorage.getItem('projects');
+    const projects: ProjectResponse[] = storedProjects !== null ? JSON.parse(storedProjects) : [];
 
     const updatedProjects = projects.map(p => (p.id === updatedProject.id ? updatedProject : p));
     this.saveToLocalStorage(updatedProjects);

@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class TimeFormatPipe implements PipeTransform {
-  transform(milliseconds: number): string {
+  public transform(milliseconds: number): string {
     if (!milliseconds || milliseconds < 0) return '00:00:00';
 
     const totalSeconds = Math.floor(milliseconds / 1000);

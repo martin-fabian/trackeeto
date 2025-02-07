@@ -33,13 +33,13 @@ export class TrackComponent implements OnInit {
   public ngOnInit(): void {
     this.projectService.projects$.subscribe(projects => {
       this.projects.set(projects);
-      if (!this.projectId && this.projects().length > 0) {
+      if (this.projectId !== null && this.projects().length > 0) {
         this.projectId = this.projects()[0]!.id;
       }
     });
     this.listenOnTimeChange();
-    this.savedProjectId$.pipe(filter(id => !!id)).subscribe(id => {
-      this.projectId = id!;
+    this.savedProjectId$.pipe(filter((id): id is number => id !== undefined)).subscribe(id => {
+      this.projectId = id;
       this.isTimerRunning.set(true);
     });
   }
@@ -60,7 +60,7 @@ export class TrackComponent implements OnInit {
   }
 
   public startTimer(): void {
-    if (this.projectId) {
+    if (this.projectId !== null) {
       this.isTimerRunning.set(true);
       this.timeService.startTimer(this.selectedProjectId()!);
       this.listenOnTimeChange();
@@ -68,11 +68,11 @@ export class TrackComponent implements OnInit {
   }
 
   public stopTimer(): void {
-    if (!this.projectId) {
+    if (this.projectId === null) {
       return;
     }
     this.isTimerRunning.set(false);
-    const elapsedTime = this.time();
+    const elapsedTime = this.time() ?? 0;
     const project = this.projects().find(p => p.id === this.projectId);
 
     if (project && elapsedTime) {
@@ -83,7 +83,7 @@ export class TrackComponent implements OnInit {
         duration: Math.round(project.duration + elapsedTime),
       };
 
-      this.timeService.stopTimer(this.selectedProjectId()!);
+      this.timeService.stopTimer();
       this.projectService.updateProject(updatedProject);
     }
     this.time.set(0);

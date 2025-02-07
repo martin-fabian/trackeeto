@@ -14,8 +14,8 @@ export class TimeService {
     return this.elapsedTimeSubject.asObservable();
   }
 
-  startTimer(id: number) {
-    if (this.selectedProjectId.getValue()) {
+  public startTimer(id: number): void {
+    if (this.selectedProjectId.getValue() !== undefined) {
       return;
     }
 
@@ -33,13 +33,13 @@ export class TimeService {
     this.timerSubscription = subscription;
   }
 
-  stopTimer(id: number) {
+  public stopTimer(): void {
     if (this.startTime()) {
-      this.resetTimer(id);
+      this.resetTimer();
     }
   }
 
-  private resetTimer(id: number) {
+  private resetTimer(): void {
     this.selectedProjectId.next(undefined);
     this.startTime.set(0);
     this.timerSubscription.unsubscribe();

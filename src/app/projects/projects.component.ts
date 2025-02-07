@@ -41,7 +41,7 @@ export class ProjectsComponent implements OnInit {
 
     this.listenOnTimeChange();
 
-    this.savedProjectId$.pipe(filter(id => !!id)).subscribe(id => {
+    this.savedProjectId$.pipe(filter((id): id is number => id !== undefined)).subscribe(id => {
       this.projectId = id!;
       const mapCopy = new Map(this.isTimerRunningMap());
       mapCopy.set(id!, true);
@@ -88,12 +88,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   public stopTimer(id: number): void {
-    const mapCopy = new Map(this.isTimerRunningMap()); // Kopie mapy
+    const mapCopy = new Map(this.isTimerRunningMap());
     mapCopy.set(id, false);
     this.isTimerRunningMap.set(mapCopy);
 
     const project = this.projects().find(p => p.id === id);
-    if (!project || !this.time()) {
+    if (!project || this.time() === undefined) {
       return;
     }
     const updatedProject: ProjectResponse = {
@@ -103,7 +103,7 @@ export class ProjectsComponent implements OnInit {
       duration: Math.round(project.duration + this.time()!),
     };
 
-    this.timeService.stopTimer(id);
+    this.timeService.stopTimer();
     this.projectService.updateProject(updatedProject);
     this.time.set(0);
     this.isAnyProjectRunning.set(false);
@@ -124,7 +124,7 @@ export class ProjectsComponent implements OnInit {
 
     const match = value.match(/^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/);
 
-    if (match) {
+    if (match && value !== '00:00:00') {
       const hours = parseInt(match[1] || '0', 10);
       const minutes = parseInt(match[2] || '0', 10);
       const seconds = parseInt(match[3] || '0', 10);
@@ -141,8 +141,8 @@ export class ProjectsComponent implements OnInit {
         const oldDuration = project.duration;
         const diff = newDuration - oldDuration;
 
-        project.endDateTime = new Date(project.endDateTime.getTime() + diff);
-        project.startDateTime = new Date(project.endDateTime.getTime() - newDuration);
+        project.endDateTime = new Date(new Date(project.endDateTime).getTime() + diff);
+        project.startDateTime = new Date(new Date(project.endDateTime).getTime() - newDuration);
 
         const now = new Date();
         if (project.endDateTime > now) {

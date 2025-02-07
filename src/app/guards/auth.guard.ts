@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  canActivate(): Observable<boolean> {
+  public canActivate(): Observable<boolean> {
     return this.authService.isAuthenticated().pipe(
       first(),
       map(isAuthenticated => {

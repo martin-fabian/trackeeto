@@ -14,12 +14,12 @@ export class ProjectFormComponent {
   hideModal = model(true);
   inputValue = '';
 
-  submit(): void {
+  public submit(): void {
     this.projectService.addNewProject(this.inputValue);
     this.closeModal();
   }
 
-  closeModal(): void {
+  public closeModal(): void {
     this.hideModal.set(false);
   }
 }
