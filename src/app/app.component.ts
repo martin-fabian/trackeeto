@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { AuthService } from './services/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +13,14 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent implements OnInit {
   private readonly authService = inject(AuthService);
-  title = 'trackeeto';
-  isAuthenticated = signal(false);
+  public title = 'trackeeto';
+  public isAuthenticated = signal(false);
+  private readonly destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
-    this.authService.isAuthenticated().subscribe(isAuthenticated => this.isAuthenticated.set(isAuthenticated));
+    this.authService
+      .isAuthenticated()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(isAuthenticated => this.isAuthenticated.set(isAuthenticated));
   }
 }

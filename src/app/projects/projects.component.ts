@@ -41,13 +41,18 @@ export class ProjectsComponent implements OnInit {
 
     this.listenOnTimeChange();
 
-    this.savedProjectId$.pipe(filter((id): id is number => id !== undefined)).subscribe(id => {
-      this.projectId = id!;
-      const mapCopy = new Map(this.isTimerRunningMap());
-      mapCopy.set(id!, true);
-      this.isTimerRunningMap.set(mapCopy);
-      this.isAnyProjectRunning.set(true);
-    });
+    this.savedProjectId$
+      .pipe(
+        filter((id): id is number => id !== undefined),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(id => {
+        this.projectId = id!;
+        const mapCopy = new Map(this.isTimerRunningMap());
+        mapCopy.set(id!, true);
+        this.isTimerRunningMap.set(mapCopy);
+        this.isAnyProjectRunning.set(true);
+      });
   }
 
   public hideModal(): void {
@@ -59,9 +64,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   private listenOnTimeChange(): void {
-    this.timeService.getElapsedTime$().subscribe(time => {
-      this.time.set(time);
-    });
+    this.timeService
+      .getElapsedTime$()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(time => {
+        this.time.set(time);
+      });
   }
 
   public removeProject(id: number): void {

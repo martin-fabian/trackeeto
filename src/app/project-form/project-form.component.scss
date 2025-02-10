@@ -8,6 +8,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &__error {
+    margin-top: 1rem;
+    color: red;
+  }
 }
 
 .modal {
@@ -44,4 +49,12 @@
 
 .modal-actions button:hover {
   background: #d172c7;
+}
+
+input:disabled {
+  background: grey;
+}
+
+input:disabled:hover {
+  cursor: not-allowed;
 }

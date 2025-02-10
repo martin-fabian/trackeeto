@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { TimeService } from '../services/time.service';
 import { DatePipe } from '@angular/common';
 import { ProjectService } from '../services/project.service';
 import { ProjectResponse } from '../interfaces/project-response.interface';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-track',
@@ -21,6 +22,7 @@ export class TrackComponent implements OnInit {
   protected readonly selectedProjectId = signal<number | null>(null);
   private readonly savedProjectId$ = this.timeService.selectedProjectId.asObservable();
   public readonly time = signal<number | undefined>(undefined);
+  private readonly destroyRef = inject(DestroyRef);
 
   get projectId(): number | null {
     return this.selectedProjectId();
@@ -31,23 +33,31 @@ export class TrackComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.projectService.projects$.subscribe(projects => {
+    this.projectService.projects$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(projects => {
       this.projects.set(projects);
       if (this.projectId !== null && this.projects().length > 0) {
         this.projectId = this.projects()[0]!.id;
       }
     });
     this.listenOnTimeChange();
-    this.savedProjectId$.pipe(filter((id): id is number => id !== undefined)).subscribe(id => {
-      this.projectId = id;
-      this.isTimerRunning.set(true);
-    });
+    this.savedProjectId$
+      .pipe(
+        filter((id): id is number => id !== undefined),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(id => {
+        this.projectId = id;
+        this.isTimerRunning.set(true);
+      });
   }
 
   private listenOnTimeChange(): void {
-    this.timeService.getElapsedTime$().subscribe(time => {
-      this.time.set(time);
-    });
+    this.timeService
+      .getElapsedTime$()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(time => {
+        this.time.set(time);
+      });
   }
 
   public onProjectChange(event: Event): void {

@@ -1,21 +1,21 @@
 import { Component, inject, model } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectService } from '../services/project.service';
 
 @Component({
   selector: 'app-project-form',
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './project-form.component.html',
   styleUrl: './project-form.component.scss',
   standalone: true,
 })
 export class ProjectFormComponent {
   private readonly projectService = inject(ProjectService);
-  hideModal = model(true);
-  inputValue = '';
+  public hideModal = model(true);
+  public inputValue = new FormControl('', [Validators.required, Validators.maxLength(10), Validators.minLength(1)]);
 
   public submit(): void {
-    this.projectService.addNewProject(this.inputValue);
+    this.projectService.addNewProject(this.inputValue.value!);
     this.closeModal();
   }
 
