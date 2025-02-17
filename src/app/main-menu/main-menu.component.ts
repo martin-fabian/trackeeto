@@ -16,13 +16,13 @@ import { AuthService } from '../services/auth.service';
 export class MainMenuComponent implements OnInit {
   private readonly timeService = inject(TimeService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly selectedProjectId$ = this.timeService.selectedProjectId.asObservable();
+  private readonly selectedTaskId$ = this.timeService.selectedTaskId.asObservable();
   public readonly time = signal<number | undefined>(undefined);
   private readonly authService = inject(AuthService);
   public readonly showMenuIcon = signal(false);
 
   public ngOnInit(): void {
-    this.selectedProjectId$
+    this.selectedTaskId$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(id => (id !== undefined ? this.timeService.getElapsedTime$() : of(0))),

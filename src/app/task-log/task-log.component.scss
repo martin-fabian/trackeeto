@@ -1,0 +1,33 @@
+.tasks {
+  &__container {
+    padding: 1rem;
+    background: #1f0f29;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+tr {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #30163c;
+  align-items: center;
+}
+
+td {
+  min-width: 70px;
+}
+
+tbody>tr:hover {
+  background: #2e183c;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .tasks__table {
+    overflow: scroll;
+  }
+}

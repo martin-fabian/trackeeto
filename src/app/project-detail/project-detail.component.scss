@@ -1,0 +1,104 @@
+.tasks {
+  &__container {
+    padding: 1rem;
+    background: #1f0f29;
+
+    &-input {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 1rem;
+      background: #1f0f29;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgb(142, 111, 155);
+      background: #1f0f29;
+      border: none;
+    }
+
+    &-input:disabled {
+      cursor: not-allowed;
+    }
+
+    &-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  &__button {
+    text-align: right;
+    margin-bottom: 1rem;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+tr {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #30163c;
+  align-items: center;
+}
+
+td {
+  min-width: 70px;
+}
+
+tbody>tr:hover {
+  background: #2e183c;
+  cursor: pointer;
+}
+
+button {
+  border: none;
+  font-size: 14px;
+  padding: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #d164c5;
+}
+
+button:hover {
+  background: #d172c7;
+}
+
+button.timer {
+  background-color: transparent;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  position: relative;
+  z-index: 0;
+  transition: background-color 0.2s;
+}
+
+button.timer:hover {
+  background: #d172c7;
+}
+
+button.timer:disabled {
+  cursor: not-allowed;
+}
+
+button.timer:disabled:hover {
+  background: none;
+}
+
+@media (max-width: 600px) {
+  .tasks__table {
+    overflow: scroll;
+  }
+}

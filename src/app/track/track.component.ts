@@ -1,11 +1,11 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { TimeService } from '../services/time.service';
 import { DatePipe } from '@angular/common';
-import { ProjectService } from '../services/project.service';
-import { ProjectResponse } from '../interfaces/project-response.interface';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TaskService } from '../services/task.service';
+import { TaskResponse } from '../interfaces/task-response.interface';
 
 @Component({
   selector: 'app-track',
@@ -16,37 +16,34 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class TrackComponent implements OnInit {
   private readonly timeService = inject(TimeService);
-  private readonly projectService = inject(ProjectService);
+  private readonly taskService = inject(TaskService);
   public readonly isTimerRunning = signal(false);
-  public readonly projects = signal<ProjectResponse[]>([]);
-  protected readonly selectedProjectId = signal<number | null>(null);
-  private readonly savedProjectId$ = this.timeService.selectedProjectId.asObservable();
+  public readonly tasks = signal<TaskResponse[]>([]);
+  protected readonly selectedTaskId = signal<number | null>(null);
   public readonly time = signal<number | undefined>(undefined);
   private readonly destroyRef = inject(DestroyRef);
 
-  get projectId(): number | null {
-    return this.selectedProjectId();
+  get taskId(): number | null {
+    return this.selectedTaskId();
   }
 
-  set projectId(value: number | null) {
-    this.selectedProjectId.set(value);
+  set taskId(value: number | null) {
+    this.selectedTaskId.set(value);
   }
 
   public ngOnInit(): void {
-    this.projectService.projects$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(projects => {
-      this.projects.set(projects);
-      if (this.projectId !== null && this.projects().length > 0) {
-        this.projectId = this.projects()[0]!.id;
-      }
+    this.taskService.allTasks$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(tasks => {
+      this.tasks.set(tasks);
+      console.log('task from track are ', tasks);
     });
     this.listenOnTimeChange();
-    this.savedProjectId$
+    this.timeService.selectedTaskId
       .pipe(
         filter((id): id is number => id !== undefined),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(id => {
-        this.projectId = id;
+        this.taskId = id;
         this.isTimerRunning.set(true);
       });
   }
@@ -60,41 +57,41 @@ export class TrackComponent implements OnInit {
       });
   }
 
-  public onProjectChange(event: Event): void {
+  public onTaskChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     if (selectElement.value.toString() !== 'Select') {
-      this.projectId = Number(selectElement.value);
+      this.taskId = Number(selectElement.value);
     } else {
-      this.projectId = null;
+      this.taskId = null;
     }
   }
 
   public startTimer(): void {
-    if (this.projectId !== null) {
+    if (this.taskId !== null) {
       this.isTimerRunning.set(true);
-      this.timeService.startTimer(this.selectedProjectId()!);
+      this.timeService.startTimer(this.selectedTaskId()!);
       this.listenOnTimeChange();
     }
   }
 
   public stopTimer(): void {
-    if (this.projectId === null) {
+    if (this.taskId === null) {
       return;
     }
     this.isTimerRunning.set(false);
     const elapsedTime = this.time() ?? 0;
-    const project = this.projects().find(p => p.id === this.projectId);
+    const task = this.tasks().find(p => p.id === this.taskId);
 
-    if (project && elapsedTime) {
-      const updatedProject: ProjectResponse = {
-        ...project,
-        startDateTime: project.startDateTime !== undefined ? project.startDateTime : new Date(),
+    if (task && elapsedTime) {
+      const updatedTask: TaskResponse = {
+        ...task,
+        startDateTime: task.startDateTime !== undefined ? task.startDateTime : new Date(),
         endDateTime: new Date(),
-        duration: Math.round(project.duration + elapsedTime),
+        duration: Math.round(task.duration + elapsedTime),
       };
 
       this.timeService.stopTimer();
-      this.projectService.updateProject(updatedProject);
+      this.taskService.updateTask(updatedTask, this.taskId);
     }
     this.time.set(0);
   }

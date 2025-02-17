@@ -1,12 +1,13 @@
-@if (isAuthenticated()) {
-  <div>
-    <app-main-menu></app-main-menu>
-    <div class="container">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-} @else {
-  <div>
+<!-- TODO uncomment -->
+<!-- @if (isAuthenticated()) { -->
+<div>
+  <app-main-menu></app-main-menu>
+  <div class="container">
     <router-outlet></router-outlet>
   </div>
-}
+</div>
+<!-- } @else { -->
+<!-- <div> -->
+<!-- <router-outlet></router-outlet> -->
+<!-- </div> -->
+<!-- } -->

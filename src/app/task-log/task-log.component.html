@@ -1,0 +1,33 @@
+<div class="tasks__container">
+  <h1>Tasks log</h1>
+  <div>
+    <div class="tasks__table">
+      <table>
+        <thead>
+          <tr>
+            <th>Task name</th>
+            <th>Start date & time</th>
+            <th>End date & time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of taskLogs(); track task.id) {
+            <tr>
+              <td>
+                {{ task.name }}
+              </td>
+              <td>
+                {{ task.startDateTime | date: 'dd.MM.yyyy HH:mm' }}
+              </td>
+              <td>
+                {{ task.endDateTime | date: 'dd.MM.yyyy HH:mm' }}
+              </td>
+              <td>{{ task.duration | date: 'HH:mm:ss' : 'UTC' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

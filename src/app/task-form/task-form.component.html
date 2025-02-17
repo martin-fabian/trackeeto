@@ -1,0 +1,13 @@
+<div class="modal-overlay">
+  <div class="modal">
+    <h2>New task</h2>
+    <input type="text" [formControl]="inputValue" placeholder="Write task name" />
+    @if (inputValue.hasError('maxlength')) {
+      <div class="modal-overlay__error">Name can be up to 10 characters max.</div>
+    }
+    <div class="modal-actions">
+      <button (click)="closeModal()">Close</button>
+      <button (click)="submit()" [disabled]="inputValue.invalid">Save</button>
+    </div>
+  </div>
+</div>

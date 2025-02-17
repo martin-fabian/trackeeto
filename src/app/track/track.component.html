@@ -1,13 +1,8 @@
 <div class="track__container">
   <div>
-    <select
-      name="project"
-      [disabled]="isTimerRunning()"
-      [(ngModel)]="projectId"
-      id="project"
-      (change)="onProjectChange($event)">
-      @for (project of projects(); track project.id) {
-        <option [value]="project.id">{{ project.name }}</option>
+    <select name="task" [disabled]="isTimerRunning()" [(ngModel)]="taskId" id="task" (change)="onTaskChange($event)">
+      @for (task of tasks(); track task.id) {
+        <option [value]="task.id">{{ task.name }}</option>
       }
     </select>
   </div>
@@ -18,7 +13,7 @@
     [value]="time() ? (time() | date: 'HH:mm:ss' : 'UTC') : '00:00:00'" />
   <div>
     @if (!isTimerRunning()) {
-      <button (click)="startTimer()" [disabled]="selectedProjectId() === null" aria-label="Start/Stop time entry">
+      <button (click)="startTimer()" [disabled]="selectedTaskId() === null" aria-label="Start/Stop time entry">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
           <g fill="none" fill-rule="evenodd">
             <rect width="36" height="36" fill="#D164C5" rx="18"></rect>

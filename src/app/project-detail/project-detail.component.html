@@ -1,0 +1,96 @@
+<div class="tasks__container">
+  <h1>Tasks</h1>
+  <div>
+    <div class="tasks__button">
+      <button (click)="openModal()">New task</button>
+    </div>
+    <div class="tasks__table">
+      <table>
+        <thead>
+          <tr>
+            <th>Task name</th>
+            <th>Start date & time</th>
+            <th>End date & time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.id) {
+            <tr routerLink="/task-log/{{ task.id }}">
+              <td>
+                <input
+                  class="tasks__container-input"
+                  id="name"
+                  (click)="stopPropagation($event)"
+                  (blur)="onBlureName($event, task.id)"
+                  [(ngModel)]="task.name" />
+                @if (task.name.length > maxNameLength) {
+                  <div class="input-error">Name can not be longer then {{ maxNameLength }} signs</div>
+                }
+              </td>
+              <td>
+                {{ task.startDateTime | date: 'dd.MM.yyyy HH:mm' }}
+              </td>
+              <td>
+                {{ task.endDateTime | date: 'dd.MM.yyyy HH:mm' }}
+              </td>
+              <td>
+                <input
+                  [disabled]="isAnyTaskRunning()"
+                  class="tasks__container-input"
+                  (keydown)="onKeyPress($event)"
+                  (click)="stopPropagation($event)"
+                  (blur)="onBlur($event, task.id)"
+                  [value]="task.duration | date: 'HH:mm:ss' : 'UTC'" />
+              </td>
+              <td>
+                <div class="tasks__container-buttons">
+                  @if (!isTimerRunningMap().get(task.id)) {
+                    <button class="timer" (click)="startTimer(task.id, $event)" aria-label="Start/Stop time entry">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
+                        <g fill="none" fill-rule="evenodd">
+                          <rect width="36" height="36" fill="#D164C5" rx="18"></rect>
+                          <path
+                            fill="#1F0F29"
+                            d="M13 11.994c0-1.101.773-1.553 1.745-.997l10.51 6.005c.964.55.972 1.439 0 1.994l-10.51 6.007c-.964.55-1.745.102-1.745-.997V11.994z"></path>
+                        </g>
+                      </svg>
+                    </button>
+                  } @else {
+                    <button class="timer" (click)="stopTimer(task.id, $event)" aria-label="Start/Stop time entry">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
+                        <g fill="none" fill-rule="evenodd">
+                          <rect width="36" height="36" fill="rgb(230, 125, 111)" rx="18"></rect>
+                          <rect width="14" height="14" x="11" y="11" fill="#1F0F29" rx="1.5"></rect>
+                        </g>
+                      </svg>
+                    </button>
+                  }
+                  <button
+                    class="timer"
+                    (click)="removeTask($event, task.id)"
+                    [disabled]="isTimerRunningMap().get(task.id)"
+                    aria-label="Start/Stop time entry">
+                    <svg viewBox="0 0 1024.00 1024.00" xmlns="http://www.w3.org/2000/svg">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          fill="#e43e07"
+                          d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896zM288 512a38.4 38.4 0 0 0 38.4 38.4h371.2a38.4 38.4 0 0 0 0-76.8H326.4A38.4 38.4 0 0 0 288 512z"></path>
+                      </g>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (showModal() && projectId()) {
+  <app-task-form [projectId]="projectId()!" (hideModalChange)="hideModal()"></app-task-form>
+}
