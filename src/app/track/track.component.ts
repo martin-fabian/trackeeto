@@ -34,7 +34,6 @@ export class TrackComponent implements OnInit {
   public ngOnInit(): void {
     this.taskService.allTasks$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(tasks => {
       this.tasks.set(tasks);
-      console.log('task from track are ', tasks);
     });
     this.listenOnTimeChange();
     this.timeService.selectedTaskId

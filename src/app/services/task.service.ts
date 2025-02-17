@@ -42,6 +42,7 @@ export class TaskService {
     const storedTasks: string | null = localStorage.getItem('tasks');
     if (storedTasks === null) {
       this.saveToLocalStorage(tasks);
+      this.tasksSubject.next(tasks);
       return;
     }
 
@@ -67,7 +68,7 @@ export class TaskService {
     let lastId =
       parsedStoredTasks !== null && parsedStoredTasks.length > 0
         ? parsedStoredTasks[parsedStoredTasks.length - 1].id
-        : 1;
+        : 0;
 
     const newTask: TaskRequest = {
       id: lastId + 1,
