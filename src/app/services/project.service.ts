@@ -3,6 +3,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, map, tap } from 'rxjs';
 import { ProjectResponse } from '../interfaces/project-response.interface';
 import { ProjectRequest } from '../interfaces/project-request.interface';
+import { TaskService } from './task.service';
+import { TaskLogService } from './task-log.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +15,8 @@ export class ProjectService {
   private projectsSubject = new BehaviorSubject<ProjectResponse[]>([]);
   public readonly projects$ = this.projectsSubject.asObservable();
   private readonly allProjects = signal<ProjectResponse[]>([]);
+  private readonly taskService = inject(TaskService);
+  private readonly taskLogService = inject(TaskLogService);
 
   constructor() {
     this.loadProjects();
@@ -49,6 +53,13 @@ export class ProjectService {
 
   public removeProject(id: number): void {
     const updatedProjects = this.allProjects().filter(project => project.id !== id);
+    this.taskService.loadTasks(id);
+    this.taskService.tasks$.subscribe(tasks => {
+      if (tasks.length) {
+        tasks.forEach(task => this.taskService.removeTask(task.id, task.projectId));
+      }
+      this.taskLogService.removeAllTaskLogsByProject(id);
+    });
     this.allProjects.set(updatedProjects);
     this.saveToLocalStorage(updatedProjects);
     this.projectsSubject.next(updatedProjects);

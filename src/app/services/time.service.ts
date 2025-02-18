@@ -34,7 +34,7 @@ export class TimeService {
   }
 
   public stopTimer(): void {
-    if (this.startTime()) {
+    if (this.startTime() !== 0) {
       this.resetTimer();
     }
   }

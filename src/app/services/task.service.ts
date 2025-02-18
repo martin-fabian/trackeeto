@@ -43,6 +43,7 @@ export class TaskService {
     if (storedTasks === null) {
       this.saveToLocalStorage(tasks);
       this.tasksSubject.next(tasks);
+      this.allTasksSubject.next(tasks);
       return;
     }
 
@@ -58,6 +59,7 @@ export class TaskService {
     this.saveToLocalStorage(filteredTasks);
     const updatedTasks: TaskResponse[] = filteredTasks.filter(task => task.projectId === projectId);
     this.tasksSubject.next(updatedTasks);
+    this.allTasksSubject.next(filteredTasks);
   }
 
   public addNewTask(projectId: number, name: string): void {
@@ -99,6 +101,7 @@ export class TaskService {
     this.saveToLocalStorage(updatedTasks);
     const returnedTasks = updatedTasks.filter(task => task.projectId === projectId);
     this.tasksSubject.next(returnedTasks);
+    this.allTasksSubject.next(updatedTasks);
   }
 
   public updateTask(updatedTask: TaskResponse, projectId: number): void {
@@ -108,6 +111,7 @@ export class TaskService {
     this.saveToLocalStorage(updatedTasks);
     const tasksToReturn = updatedTasks.filter(task => task.projectId === projectId);
     this.tasksSubject.next(tasksToReturn);
+    this.allTasksSubject.next(updatedTasks);
   }
 
   private saveToLocalStorage(tasks: TaskResponse[]): void {

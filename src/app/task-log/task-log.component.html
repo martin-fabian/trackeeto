@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (task of taskLogs(); track task.id) {
+          @for (task of taskLogs(); track $index) {
             <tr>
               <td>
                 {{ task.name }}

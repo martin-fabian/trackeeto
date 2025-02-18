@@ -22,4 +22,11 @@ export class TaskLogService {
     const filteredTasks = tasks.filter(task => task.id === taskId);
     return filteredTasks;
   }
+
+  public removeAllTaskLogsByProject(projectId: number): void {
+    const storedTasks: string | null = localStorage.getItem('task-log');
+    const parsedStoredTasks: TaskResponse[] = storedTasks !== null ? JSON.parse(storedTasks) : [];
+    const updatedTasks = parsedStoredTasks.filter(task => task.projectId !== projectId);
+    this.saveToLocalStorage(updatedTasks);
+  }
 }

@@ -2,7 +2,7 @@
   <h1>Projects</h1>
   <div>
     <div class="projects__button">
-      <button (click)="openModal()">New project</button>
+      <button (click)="openProjectForm()">New project</button>
     </div>
     <div class="projects__table">
       <table>
@@ -61,6 +61,20 @@
   </div>
 </div>
 
+@if (showProjectForm()) {
+  <app-project-form (hideModalChange)="hideProjectForm()"></app-project-form>
+}
+
 @if (showModal()) {
-  <app-project-form (hideModalChange)="hideModal()"></app-project-form>
+  <div class="modal-overlay">
+    <div class="modal">
+      <h2>Project removal!</h2>
+      <div>Project has existing tasks associated with. Removing project will also remove this data.</div>
+      <div>Do you really want to continue?</div>
+      <div class="modal-actions">
+        <button (click)="confirm()">Yes</button>
+        <button (click)="cancel()">No</button>
+      </div>
+    </div>
+  </div>
 }

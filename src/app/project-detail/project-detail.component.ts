@@ -8,6 +8,7 @@ import { TaskResponse } from '../interfaces/task-response.interface';
 import { TaskService } from '../services/task.service';
 import { TaskLogService } from '../services/task-log.service';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-project-deail',
@@ -48,6 +49,7 @@ export class ProjectDetailComponent implements OnInit {
     this.projectId.set(Number(projectId));
     this.taskService.loadTasks(this.projectId()!);
     this.taskService.tasks$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(tasks => this.tasks.set(tasks));
+    this.listenOnIdChange();
     this.listenOnTimeChange();
   }
 
@@ -59,13 +61,25 @@ export class ProjectDetailComponent implements OnInit {
     this.showModal.set(true);
   }
 
+  private listenOnIdChange(): void {
+    this.timeService.selectedTaskId
+      .pipe(
+        filter((id): id is number => id !== undefined),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(id => {
+        if (id) {
+          const runningTask = this.tasks().find(task => task.id === id);
+          this.isTimerRunningMap.set(new Map().set(runningTask!.id, true));
+        }
+      });
+  }
+
   private listenOnTimeChange(): void {
     this.timeService
       .getElapsedTime$()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(time => {
-        this.time.set(time);
-      });
+      .subscribe(time => this.time.set(time));
   }
 
   public removeTask(event: Event, id: number): void {
@@ -94,7 +108,9 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   public stopTimer(id: number, event?: Event): void {
-    if (event) event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     const mapCopy = new Map(this.isTimerRunningMap());
     mapCopy.set(id, false);
     this.isTimerRunningMap.set(mapCopy);
@@ -109,10 +125,15 @@ export class ProjectDetailComponent implements OnInit {
       endDateTime: new Date(),
       duration: Math.round(task.duration + this.time()!),
     };
+    const logTask = {
+      ...updatedTask,
+      duration: Math.round(this.time()!),
+    };
 
     this.timeService.stopTimer();
     this.taskService.updateTask(updatedTask, this.projectId()!);
-    this.taskLogService.saveLog(updatedTask);
+
+    this.taskLogService.saveLog(logTask);
     this.time.set(0);
     this.isAnyTaskRunning.set(false);
   }

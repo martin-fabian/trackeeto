@@ -6,6 +6,8 @@ import { DatePipe } from '@angular/common';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TaskService } from '../services/task.service';
+import { TaskResponse } from '../interfaces/task-response.interface';
 
 @Component({
   selector: 'app-projects',
@@ -16,14 +18,18 @@ import { FormsModule } from '@angular/forms';
 })
 export class ProjectsComponent implements OnInit {
   public readonly projects = signal<ProjectResponse[]>([]);
+  private readonly taskService = inject(TaskService);
   private readonly projectService = inject(ProjectService);
   private readonly destroyRef = inject(DestroyRef);
   public readonly isTimerRunningMap = signal(new Map<number, boolean>());
   public readonly time = signal<number | undefined>(undefined);
   protected readonly selectedProjectId = signal<number | null>(null);
   public readonly isAnyProjectRunning = signal(false);
-  public readonly showModal = signal(false);
+  public readonly showProjectForm = signal(false);
   public readonly maxNameLength = 10;
+  public readonly tasks = signal<TaskResponse[]>([]);
+  public readonly showModal = signal(false);
+  public readonly projectIdForDeletion = signal<number | undefined>(undefined);
 
   get projectId(): number | null {
     return this.selectedProjectId();
@@ -37,19 +43,40 @@ export class ProjectsComponent implements OnInit {
     this.projectService.projects$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(projects => this.projects.set(projects));
+
+    this.taskService.allTasks$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(tasks => {
+      this.tasks.set(tasks);
+    });
   }
 
-  public hideModal(): void {
-    this.showModal.set(false);
+  public hideProjectForm(): void {
+    this.showProjectForm.set(false);
   }
 
-  public openModal(): void {
-    this.showModal.set(true);
+  public openProjectForm(): void {
+    this.showProjectForm.set(true);
   }
 
   public removeProject(event: Event, id: number): void {
+    this.projectIdForDeletion.set(id);
     event.stopPropagation();
-    this.projectService.removeProject(id);
+    const isAnyExistingTask = this.tasks().some(task => task.projectId === id);
+    if (isAnyExistingTask) {
+      this.showModal.set(true);
+    } else {
+      this.projectIdForDeletion.set(undefined);
+      this.projectService.removeProject(id);
+    }
+  }
+
+  public confirm(): void {
+    this.projectService.removeProject(this.projectIdForDeletion()!);
+    this.projectIdForDeletion.set(undefined);
+    this.showModal.set(false);
+  }
+
+  public cancel(): void {
+    this.showModal.set(false);
   }
 
   public stopPropagation(event: Event): void {

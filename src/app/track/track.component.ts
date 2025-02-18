@@ -42,6 +42,7 @@ export class TrackComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(id => {
+        console.log('id running ', id);
         this.taskId = id;
         this.isTimerRunning.set(true);
       });
