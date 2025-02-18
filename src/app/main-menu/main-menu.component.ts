@@ -5,6 +5,7 @@ import { DatePipe, NgClass } from '@angular/common';
 import { of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../services/auth.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-main-menu',
@@ -20,6 +21,7 @@ export class MainMenuComponent implements OnInit {
   public readonly time = signal<number | undefined>(undefined);
   private readonly authService = inject(AuthService);
   public readonly showMenuIcon = signal(false);
+  private readonly titleService = inject(Title);
 
   public ngOnInit(): void {
     this.selectedTaskId$
@@ -27,7 +29,24 @@ export class MainMenuComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         switchMap(id => (id !== undefined ? this.timeService.getElapsedTime$() : of(0))),
       )
-      .subscribe(time => this.time.set(time));
+      .subscribe(time => {
+        this.time.set(time);
+        if (time === 0) {
+          this.titleService.setTitle('Trackeeto');
+        } else {
+          const hours = new Date(time).getUTCHours();
+          const minutes = new Date(time).getMinutes();
+          const seconds = new Date(time).getSeconds();
+          this.titleService.setTitle(
+            'Trackeeto - ' +
+              (hours < 10 ? '0' + hours.toString() : hours.toString()) +
+              ':' +
+              (minutes < 10 ? '0' + minutes.toString() : minutes.toString()) +
+              ':' +
+              (seconds < 10 ? '0' + seconds.toString() : seconds.toString()),
+          );
+        }
+      });
   }
 
   public logout(): void {
