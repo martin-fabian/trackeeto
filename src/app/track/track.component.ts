@@ -6,6 +6,7 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TaskService } from '../services/task.service';
 import { TaskResponse } from '../interfaces/task-response.interface';
+import { TaskLogService } from '../services/task-log.service';
 
 @Component({
   selector: 'app-track',
@@ -22,6 +23,7 @@ export class TrackComponent implements OnInit {
   protected readonly selectedTaskId = signal<number | null>(null);
   public readonly time = signal<number | undefined>(undefined);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly taskLogService = inject(TaskLogService);
 
   get taskId(): number | null {
     return this.selectedTaskId();
@@ -90,8 +92,14 @@ export class TrackComponent implements OnInit {
         duration: Math.round(task.duration + elapsedTime),
       };
 
+      const logTask = {
+        ...updatedTask,
+        duration: Math.round(elapsedTime),
+      };
+
       this.timeService.stopTimer();
       this.taskService.updateTask(updatedTask, this.taskId);
+      this.taskLogService.saveLog(logTask);
     }
     this.time.set(0);
   }
