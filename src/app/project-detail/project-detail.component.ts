@@ -132,7 +132,6 @@ export class ProjectDetailComponent implements OnInit {
 
     this.timeService.stopTimer();
     this.taskService.updateTask(updatedTask, this.projectId()!);
-
     this.taskLogService.saveLog(logTask);
     this.time.set(0);
     this.isAnyTaskRunning.set(false);

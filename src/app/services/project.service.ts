@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, first, map, tap } from 'rxjs';
 import { ProjectResponse } from '../interfaces/project-response.interface';
 import { ProjectRequest } from '../interfaces/project-request.interface';
 import { TaskService } from './task.service';
@@ -54,15 +54,17 @@ export class ProjectService {
   public removeProject(id: number): void {
     const updatedProjects = this.allProjects().filter(project => project.id !== id);
     this.taskService.loadTasks(id);
-    this.taskService.tasks$.subscribe(tasks => {
+    this.taskService.tasks$.pipe(first()).subscribe(tasks => {
       if (tasks.length) {
-        tasks.forEach(task => this.taskService.removeTask(task.id, task.projectId));
+        tasks.forEach(task => {
+          this.taskService.removeTask(task.id, task.projectId);
+        });
       }
       this.taskLogService.removeAllTaskLogsByProject(id);
+      this.allProjects.set(updatedProjects);
+      this.saveToLocalStorage(updatedProjects);
+      this.projectsSubject.next(updatedProjects);
     });
-    this.allProjects.set(updatedProjects);
-    this.saveToLocalStorage(updatedProjects);
-    this.projectsSubject.next(updatedProjects);
   }
 
   public updateProject(updatedProject: ProjectResponse): void {
