@@ -150,6 +150,7 @@ export class ProjectDetailComponent implements OnInit {
     event.stopPropagation();
   }
 
+  // TODO we can call one method with one more identificator if it is name or time
   public onBlureName(event: FocusEvent, taskId: number): void {
     const input = event.target as HTMLInputElement;
 
@@ -177,6 +178,7 @@ export class ProjectDetailComponent implements OnInit {
       const minutes = parseInt(match[2] || '0', 10);
       const seconds = parseInt(match[3] || '0', 10);
 
+      // TODO check if input values are within correct time values <= 60
       input.value = `${hours.toString().padStart(2, '0')}:${minutes
         .toString()
         .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;

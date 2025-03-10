@@ -60,6 +60,7 @@ export class TrackComponent implements OnInit {
 
   public onTaskChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
+    // TODO this if can be removed, rest from previous impl
     if (selectElement.value.toString() !== 'Select') {
       this.taskId = Number(selectElement.value);
     } else {

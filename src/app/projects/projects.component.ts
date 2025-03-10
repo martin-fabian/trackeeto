@@ -40,6 +40,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    // TODO possible connection both streams together forkJoin and move to method
     this.projectService.projects$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(projects => this.projects.set(projects));
